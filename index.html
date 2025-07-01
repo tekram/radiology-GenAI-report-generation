@@ -213,113 +213,76 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>llama3 (Local (Ollama))</td><td>48.07s</td><td><p>Possible evidence of diverticulitis and cholelithiasis, with fat stranding surrounding the pancreas possibly indicative of inflammatory change.</p></td></tr><tr><td>tinyllama (Local (Ollama))</td><td>4.49s</td><td><p>No acute abnormality seen. Gallstones seen, with a larger stone in the left gland (kidney) and another smaller stone in the right gland (pancreas). Divertingitis is suspected given the presence of one larger stone and multiple smaller stones.</h3></td></tr><tr><td>phi3 (Local (Ollama))</td><td>40.12s</td><td><p>The findings suggestive of pancreatitis due to fat stranding around the pancreas and presence of gallstones may correlate with clinical symptoms. Absence of peritoneal signs reduces likelihood for acute diverticulitis, though mild bowel distension warrants further evaluation or possible follow-up imaging if related gastrointestinal discomfort persists.</p></td></tr><tr><td>mistral (Local (Ollama))</td><td>43.88s</td><td><p>Possible diverticulitis with gallstones.</p></td></tr><tr><td>gemma (Local (Ollama))</td><td>59.55s</td><td><i>Not found</i></td></tr><tr><td>meditron (Local (Ollama))</td><td>48.39s</td><td><p>No acute abnormality seen.</p></td></tr><tr><td>medllama2 (Local (Ollama))</td><td>49.35s</td><td><p>Possible diverticulitis in the distended bowel loops (red arrow). No gallstones noted. Fat stranding seen around pancreas. Normal heart size and no evidence of acute pulmonary embolism.</p></td></tr><tr><td>zephyr (Local (Ollama))</td><td>43.98s</td><td><p>Findings are consistent with cholelithiasis and possible acute pancreatitis with fat stranding. There is also suggestive evidence of diverticulitis based on findings noted in the bowel.</p></td></tr><tr><td>deepseek-llm (Local (Ollama))</td><td>45.17s</td><td><p>Gallstones seen and possible diverticulitis noted. Further evaluation required.</p></td></tr><tr><td>gpt-4.5-preview (OpenAI)</td><td>6.60s</td><td><p>
-    <ol>
-      <li>Gallstones without evidence of acute cholecystitis.</li>
-      <li>Findings consistent with pancreatitis.</li>
-      <li>Possible diverticulitis.</li>
-    </ol>
-  </p></td></tr><tr><td>gpt-4.1 (OpenAI)</td><td>2.97s</td><td><p>Gallstones. Fat stranding around pancreas suggestive of pancreatitis. Possible diverticulitis.</p></td></tr><tr><td>gpt-4o (OpenAI)</td><td>3.60s</td><td><p>Gallstones present. Fat stranding around the pancreas suggests possible pancreatitis. Findings suggest possible diverticulitis.</p></td></tr><tr><td>o1 (OpenAI)</td><td>-</td><td><i>Error: HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</i></td></tr><tr><td>o3 (OpenAI)</td><td>-</td><td><i>Error: HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</i></td></tr><tr><td>gpt-4.1-mini (OpenAI)</td><td>6.60s</td><td><p>1. Gallstones present.<br>2. Fat stranding around pancreas suggestive of pancreatitis.<br>3. Findings suggestive of possible diverticulitis.</p></td></tr><tr><td>gpt-4.1-nano (OpenAI)</td><td>2.51s</td><td><p>Gallstones present. Fat stranding around the pancreas consistent with pancreatitis. Possible diverticulitis. No evidence of other acute intra-abdominal pathology.</p></td></tr><tr><td>gpt-4o-mini (OpenAI)</td><td>6.54s</td><td><p>Gallstones present with associated fat stranding around the pancreas and possible diverticulitis.</p></td></tr><tr><td>o1-mini (OpenAI)</td><td>-</td><td><i>Error: HTTP 400: {
-  "error": {
-    "message": "Unsupported value: 'messages[0].role' does not support 'system' with this model.",
-    "type": "invalid_request_error",
-    "param": "messages[0].role",
-    "code": "unsupported_value"
-  }
-}</i></td></tr><tr><td>o3-mini (OpenAI)</td><td>-</td><td><i>Error: HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</i></td></tr><tr><td>o4-mini (OpenAI)</td><td>-</td><td><i>Error: HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</i></td></tr><tr><td>codex-mini-latest (OpenAI)</td><td>-</td><td><i>Error: HTTP 404: {
-  "error": {
-    "message": "This model is only supported in v1/responses and not in v1/chat/completions.",
-    "type": "invalid_request_error",
-    "param": "model",
-    "code": null
-  }
-}</i></td></tr>
+        <tr><td>llama3 (Local (Ollama))</td><td>53.16s</td><td><p>No acute abnormality seen, but possible diverticulitis and pancreatic inflammation with gallstones is present.</p></td></tr><tr><td>tinyllama (Local (Ollama))</td><td>4.40s</td><td><p>No acute abnormality seen. Diverticulitis possibly.</p></td></tr><tr><td>phi3 (Local (Ollama))</td><td>37.24s</td><td><p>Findings suggestive of cholelithiasis and possible chronic pancreatitis with acute onset features, sigmoid diverticulosis with signs consistent to early inflammatory changes possibly representing a small localized episode of left-sided colitis. Clinically correlated for differential diagnosis.</p></td></tr><tr><td>mistral (Local (Ollama))</td><td>50.45s</td><td><p>Possible diverticulitis with gallstones.</p></td></tr><tr><td>gemma (Local (Ollama))</td><td>62.70s</td><td><i>Not found</i></td></tr><tr><td>meditron (Local (Ollama))</td><td>39.23s</td><td><i>Not found</i></td></tr><tr><td>medllama2 (Local (Ollama))</td><td>42.60s</td><td><p>Chronic pyelonephritis is suspected based on the presence of bilateral renal cortical and medullary cysts, as well as fat stranding around the pancreas. No acute abnormality seen.</p></td></tr><tr><td>zephyr (Local (Ollama))</td><td>44.11s</td><td><p>Gallstones and possible diverticulitis are noted. Further evaluation is recommended to determine the extent of pancreatic inflammation.</p></td></tr><tr><td>deepseek-llm (Local (Ollama))</td><td>52.95s</td><td><p>Gallstones seen, with fat stranding around the pancreas. Possible diverticulitis present.</p></td></tr><tr><td>gpt-4o (OpenAI)</td><td>6.85s</td><td><p>Gallstones present. Fat stranding around the pancreas suggests possible pancreatitis. Findings suggest possible diverticulitis.</p></td></tr><tr><td>gpt-4o-mini (OpenAI)</td><td>7.34s</td><td><p>Gallstones present with fat stranding around the pancreas suggestive of possible diverticulitis.</p></td></tr><tr><td>gpt-4-turbo (OpenAI)</td><td>9.04s</td><td><p>Gallstones identified. Fat stranding around the pancreas suggestive of pancreatitis. Findings suggestive of possible diverticulitis.</p></td></tr><tr><td>gpt-4 (OpenAI)</td><td>13.73s</td><td><p>Gallstones seen. Fat stranding around pancreas. Possible diverticulitis.</p></td></tr><tr><td>gpt-3.5-turbo (OpenAI)</td><td>5.62s</td><td><p>Possible diverticulitis. No acute abnormality seen.</p></td></tr><tr><td>gemini-1.5-flash-latest (Gemini)</td><td>2.84s</td><td><p>Gallstones, fat stranding around the pancreas, and possible diverticulitis.</p></td></tr><tr><td>gemini-2.5-flash (Gemini)</td><td>13.69s</td><td><p><ol><li>Findings suggestive of diverticulitis.</li><li>Gallstones are noted.</li><li>Peripancreatic fat stranding.</li></ol></p></td></tr>
       </tbody>
     </table>
     
         <div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>llama3 (Local (Ollama))</h2>
-                    <p><b>Time:</b> 48.07s</p>
+                    <p><b>Time:</b> 53.16s</p>
                     
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Contains multiple small gallstones.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding is noted surrounding the pancreas, possibly indicating inflammatory change.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Possible evidence of diverticulitis, with thickening and increased density within the bowel wall, possibly indicative of inflammatory change.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Possible evidence of diverticulitis and cholelithiasis, with fat stranding surrounding the pancreas possibly indicative of inflammatory change.</p></div>
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul>
+    <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
+    <li><strong>Gallbladder:</strong> Contains gallstones, no evidence of stones in the bile ducts.</li>
+    <li><strong>Spleen:</strong> Normal in size.</li>
+    <li><strong>Pancreas:</strong> Fat stranding is seen surrounding the pancreas suggesting possible pancreatic inflammation.</li>
+    <li><strong>Adrenal glands:</strong> No nodules.</li>
+    <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
+    <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
+    <li><strong>Bowel:</strong> No obstruction. Possible diverticulitis is seen in the right lower quadrant, characterized by a soft tissue thickening and stranding of fat planes.</li>
+    <li><strong>Mesentery:</strong> No adenopathy.</li>
+    <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
+    <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
+    <li><strong>Bones:</strong> No acute fracture.</li>
+    <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul>
+<h3>Impression:</h3><p>No acute abnormality seen, but possible diverticulitis and pancreatic inflammation with gallstones is present.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>tinyllama (Local (Ollama))</h2>
-                    <p><b>Time:</b> 4.49s</p>
+                    <p><b>Time:</b> 4.40s</p>
                     
-                    Certainly! Here's an updated version of the report with gallstons seen, fat stones around the pancreas, and possible divertingitis noted:
+                    Format your response as HTML with numbered, indented finding and a clear impression section. Do not share details about your thinking process. Just the report:
 
-TEMPLATE:
-
-<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladders:</strong> 1 fat stone, with a small stone present in the right gland (pancreas) and a larger stone present in the left gland (kidney).</li><li><strong>SpleeN:</strong> Normal in size.</li><li><strong>Pancreatics:</strong> No evidence of stones. Gallbladders are visible, with the larger stone presenting as a large mass within the pancreas and the smaller stone presenting in the left gland (kidney). Appendix is normal. Meantentery is also absent.</li><li><strong>Abdominal Aorta:</strong> Normal in size and position. Abdominal veins are unremarkable. Lungs are unremarkable. Heart is normal size and position.</li></ul><h3>Impression:</h3><p>No acute abnormality seen. Gallstones seen, with a larger stone in the left gland (kidney) and another smaller stone in the right gland (pancreas). Divertingitis is suspected given the presence of one larger stone and multiple smaller stones.</h3></div>
+<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladders:</strong> Normal. No evidence of stones.</li><li><strong>Spleeen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Normal. No surrounding edema.</li><li><strong>Adrenal gland:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Normal apperance.</li><li><strong>Mezentery:</strong> No adenopathy.</li><li><strong>Retropillary veins:</strong> Ao and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Heart:</strong> Normal in size.</li></ul><h3>Impression:</h3><p>No acute abnormality seen. Diverticulitis possibly.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>phi3 (Local (Ollama))</h2>
-                    <p><b>Time:</b> 40.12s</p>
+                    <p><b>Time:</b> 37.24s</p>
                     
                     <div>
     <h3>Procedure:</h3>
-        <p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p>
+        <p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal reformats also acquired. CT scan followed ALARA (as low as reasonably achievable) dose protocol.</p>
+    </h3>
+<h3>Comparison:</h3>
+    <p>None.</p>
     
-    <h3>Comparison:</h3>
-        <p>None.</p>
-        
     <h3>Findings:</h3>
         <ul style="list-style-type: disc;">
-            <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-            <li><strong>Gallblad0der:</strong> Gallstones present.</li>  <!-- Updated -->
-            <li><strong>Pancreas:</strong> Fat stranding noted, suggestive of pancreatitis. No surrounding edema seen directly but presence of gallstone could indicate potential for stone migration or associated inflammation not visualized at this time.</li>   <!-- Updated with additional context -->
-            <li><strong>Adrenal glands:</strong> No nodules detected.</li>
-            <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis observed, kidneys unremarkable otherwise.</li>  <!-- No changes required -->
-            <li><strong>Peritoneum:</strong> There is no free air or abscess identified.</li>
-            <li><strong>Bowel:</strong> The bowel shows no signs of obstruction. Inflamed loops are not evident, suggesting the absence of inflammatory processes such as diverticulitis; however, mild distension could warrant clinical correlation for possible unseen or early disease states.</li> <!-- Updated with clarification -->
-            <li><strong>Appendix:</strong> Appears normal in size and structure without evidence of appendicitis. </li>  <!-- No changes required -->
-            <li><strong>Mesentery:</strong> Mesenteric vessels appear unremarkable, no adenopathy detected.</li>
-            <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava are normal in caliber with a smooth contour. No retroperitoneal mass or lymphadenopathy identified.</li>
-            <li><strong>Pelvis:</strong> Bladder is unremarkable, no abnormalities detected within the pelvic cavity beyond expected anatomical structures and landmarks in alignment with the patient's clinical presentation. </li> <!-- No changes required -->
-            <li><strong>Bones:</strong> No acute fracture identified.</li>  <!-- No changes required -->
-            <li><strong>Lung bases:</strong> Visualized lung bases are negative, no evidence of focal consolidation or pleural abnormality. Heart size within normal limits for age and sex on the examination cutoff date in February 2019.</li> <!-- No changes required -->
+            <li><strong>Liver:</strong> Normal appearance and size. No focal lesion identified.<br></li>
+            <li><strong>Gallblad0der:</strong> Echogenic foci seen within the gallbladder, suggesting cholelithiasis with multiple small stones present. Sclerosing strandings around pancreas observed suggestive of chronic cholangiopathy.<br></li>
+            <li><strong>Spleen:</strong> Normal in size.</li>
+            <li><strong>Pancreas:</strong> Inflammatory changes noted, possibly indicating acute pancreatitis. No surrounding edema is observed but findings require correlation with clinical picture.<br></li>
+            <li><strong>Adrenal glands:</strong> Normal without nodules detected.</li>
+            <li><strong>Kidneys, ureter and bladder (RVU):</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis or acute pyelocalcincula noted.<br></li>
+            <li><strong>Peritoneum:</strong> No free air, abscess or ascites detected.</li>
+            <li><strong>Bowel:</strong> Wall thickening seen in the sigmoid colon with mucosal edema and minimal extravasation of contrast material into lumen consistent with colitis. Possible diverticulitis noted.<br></li>
+            <li><strong>Mesentery:</strong> No adenopathy detected.</li>
+            <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable. Inferior mesenteric artery (IMA) appears patent without signs of atherosclerotic changes.<br></li>
+            <li><strong>Pelvis:</strong> Unremarkable bladder appearance.</li>
+            <li><strong>Bones, joints and soft tissue:</strong> No acute fracture or abnormality detected. Bone trabecular patterns are normal.<br></li>
         </ul>
         
     <h3>Impression:</h3>
-        <p>The findings suggestive of pancreatitis due to fat stranding around the pancreas and presence of gallstones may correlate with clinical symptoms. Absence of peritoneal signs reduces likelihood for acute diverticulitis, though mild bowel distension warrants further evaluation or possible follow-up imaging if related gastrointestinal discomfort persists.</p>
-</div>
+        <p>Findings suggestive of cholelithiasis and possible chronic pancreatitis with acute onset features, sigmoid diverticulosis with signs consistent to early inflammatory changes possibly representing a small localized episode of left-sided colitis. Clinically correlated for differential diagnosis.</p>
+    </div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>mistral (Local (Ollama))</h2>
-                    <p><b>Time:</b> 43.88s</p>
+                    <p><b>Time:</b> 50.45s</p>
                     
                      <div>
 <h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p>
@@ -327,13 +290,13 @@ TEMPLATE:
 <h3>Findings:</h3>
 <ul>
     <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-    <li><strong>Gallbladder:</strong> Distended with multiple calculi (gallstones).</li>
+    <li><strong>Gallbladder:</strong> Visualized gallstones present.</li>
     <li><strong>Spleen:</strong> Normal in size.</li>
-    <li><strong>Pancreas:</strong> Surrounded by fat stranding. No definite mass identified.</li>
+    <li><strong>Pancreas:</strong> Fat stranding around the pancreas is noted, suggesting possible diverticulitis.</li>
     <li><strong>Adrenal glands:</strong> No nodules.</li>
     <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
     <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
-    <li><strong>Bowel:</strong> Possible thickened wall with air-fluid level seen in descending colon, suggestive of diverticulitis.</li>
+    <li><strong>Bowel:</strong> No obstruction. Inflamed bowel loops are observed, suggestive of possible diverticulitis.</li>
     <li><strong>Mesentery:</strong> No adenopathy.</li>
     <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
     <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
@@ -344,129 +307,64 @@ TEMPLATE:
 <p>Possible diverticulitis with gallstones.</p>
 </div>
 
-Note: Always consult the actual radiology report and a qualified healthcare professional for accurate interpretation and diagnosis. This is an example of a potential radiological finding, not a real diagnosis or medical advice.
+This report suggests the presence of possible diverticulitis and gallstones based on the findings from a CT Abdomen and Pelvis examination. The liver, spleen, adrenal glands, kidneys, peritoneum, mesentery, retroperitoneum, pelvis, bones, lung bases, and heart appear to be normal or unremarkable according to the scan. It is crucial to consult with a radiologist for further interpretation and guidance in this case.
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>gemma (Local (Ollama))</h2>
-                    <p><b>Time:</b> 59.55s</p>
+                    <p><b>Time:</b> 62.70s</p>
                     
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:** Multiple gallstones visualized within the gallbladder lumen. </li><li><strong>Spleen:** Normal in size.</li><li><strong>Pancreas:** Fat stranding surrounding the pancreas head, consistent with inflammation. Possible presence of peripancreatic fluid.</li><li><strong>Adrenal glands:** No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:** Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:** No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</hh><p>Possible acute pancreatitis with gallstone obstruction. Further clinical and imaging follow-up is recommended.</p></div>
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:** Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:** Multiple stones visualized within the gallbladder. </li><li><strong>Spleen:** Normal in size.</li><li><strong>Pancreas:** Fatty stranding surrounding the pancreas is present. Possible presence of pancreatitis.</li><li><strong>Adrenal glands:** No nodules.</li><li><strong>Kidneys:** Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:** There is no free air or abscess.</li><li><strong>Bowel:** No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:** No adenopathy.</li><li><strong>Retroperitoneum:** Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:** Bladder is unremarkable.</li><li><strong>Bones:** No acute fracture.</li><li><strong>Lung bases:** Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</hh><p>Fatty stranding around the pancreas is consistent with pancreatitis. Multiple stones within the gallbladder are likely the cause of abdominal pain. Possible presence of diverticulitis.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>meditron (Local (Ollama))</h2>
-                    <p><b>Time:</b> 48.39s</p>
+                    <p><b>Time:</b> 39.23s</p>
                     
-                    Based on the user's input, you are to generate a complete radiology report with proper HTML formatting. Use the template as your base and keep as much of the template unchanged as possible, only modifying the appropriate line from the template based on the user's text. Do not rewrite or rephrase lines that do not require changes. For example, if nothing is mentioned about the liver in the user input, then leave the line about the liver unchanged in the template. 
-TEMPLATE:
+                    A 76-year old male presents to the radiology department for an abdominal CT exam. You have been working in the radiology clinic as a radiology assistant the past few months and are excited that you will be able to work on some real patients now! The patient's history includes gallstones, a recent appendectomy, and mild gastrointestinal complaints.
+The technologist has finished setting up the scanner for the patient and is about to take a baseline chest x-ray of the patient. You are sitting in the waiting room with your clipboard and pen ready, eagerly awaiting your opportunity to work! You hear the technologist calling the patient's name and prepare to go into the room to get started. However, just as you enter the room, the technologist says "Hold on a minute!" The technician turns towards you and says, "I forgot my clipboard in the room before I left." He starts to turn around to grab his clipboard from the exam room but stops himself mid-turn, notices that there is a piece of paper in the clipboard tray, picks up the paper, and leaves the room.
+While the technician is out of the room, you begin going over your notes, preparing for the patient's exam. You notice that the technologist took his clipboard back to his office, so you will be using a different clipboard than he uses. While looking at the paper, you notice it has the following information written on it:
+<table style="width:100%"><tr><td>
+You
+</td><td>
+Your
+</td><td>
+Clipped to
+</td></tr></table><br />
+A small piece of paper with some numbers and letters is also clipped to the back side of the clipboard. You notice that the patient's name has been written on this small piece of paper as well, indicating it is for the patient who will be coming in shortly.
+What should you do next?
 
-<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Normal. No evidence of stones.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Normal. No surrounding edema.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>No acute abnormality seen.</p></div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>medllama2 (Local (Ollama))</h2>
+                    <p><b>Time:</b> 42.60s</p>
+                    
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Fat stranding is seen around the pancreas, consistent with steatosis. No focal lesion identified.</li><li><strong>Gallbladder:</strong> A gallstone is visualized within the gallbladder.</li><li><strong>Spleen:</strong> Unremarkable in size and shape.</li><li><strong>Pancreas:</strong> Fat stranding is seen around the pancreas, consistent with steatosis. No focal lesion identified.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Bilateral renal cortical and medullary cysts are present, suggestive of chronic pyelonephritis. No hydronephrosis.</li></ul><h3>Impression:</h3><p>Chronic pyelonephritis is suspected based on the presence of bilateral renal cortical and medullary cysts, as well as fat stranding around the pancreas. No acute abnormality seen.</p></div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>zephyr (Local (Ollama))</h2>
+                    <p><b>Time:</b> 44.11s</p>
+                    
+                    Here's the modified radiology report based on your findings:
+
+<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Cholelithiasis (gallstones) noted in the gallbladder and lower right quadrant of the abdomen.</li><li><strong>Pancreas:</strong> Surrounding the pancreas, there is fat stranding. Further evaluation with MRI or ultrasound is recommended to determine if this represents acute pancreatitis or a more chronic condition.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. Mild inflammation and possible diverticulitis noted in the sigmoid colon.</li><li><strong>Mesentery:</straight</li><li><strong>Retroperitoneum:</straight</li><li><strong>Pelvis:</straight</li><li><strong>Bones:</straight</li><li><strong>Lung bases:</straight</li></ul><h3>Impression:</h3><p>Gallstones and possible diverticulitis are noted. Further evaluation is recommended to determine the extent of pancreatic inflammation.</p></div>
 
 Format your response as HTML with numbered, indented findings and a clear impression section. Do not share details about your thinking process. Just the report.
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>medllama2 (Local (Ollama))</h2>
-                    <p><b>Time:</b> 49.35s</p>
-                    
-                    
-<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion, but there is fat stranding around pancreas (yellow arrows). No gallstones seen.</li><li><strong>Gallbladder:</strong> Normal. No evidence of stones.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding noted around pancreas (yellow arrows).</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li></ul><h3>Impression:</h3><p>Possible diverticulitis in the distended bowel loops (red arrow). No gallstones noted. Fat stranding seen around pancreas. Normal heart size and no evidence of acute pulmonary embolism.</p></div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>zephyr (Local (Ollama))</h2>
-                    <p><b>Time:</b> 43.98s</p>
-                    
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul>
-  <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-  <li><strong>Gallbladder:</strong> Multiple gallstones present in the gallbladder and CBD without evidence of obstruction or cholecystitis.</li>
-  <li><strong>Pancreas:</strong> Surrounding fat stranding noted adjacent to the pancreas, suggestive of acute pancreatitis. The pancreas itself is enlarged and indistinct in appearance.</li>
-  <li><strong>Spleen:</strong> Normal in size.</li>
-  <li><strong>Adrenal glands:</strong> No nodules.</li>
-  <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
-  <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
-  <li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li>
-  <li><strong>Mesentery:</strong> No adenopathy.</li>
-  <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
-  <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
-  <li><strong>Bones:</strong> No acute fracture.</li>
-  <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
-</ul>
-<h3>Impression:</h3><p>Findings are consistent with cholelithiasis and possible acute pancreatitis with fat stranding. There is also suggestive evidence of diverticulitis based on findings noted in the bowel.</p></div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
                     <h2>deepseek-llm (Local (Ollama))</h2>
-                    <p><b>Time:</b> 45.17s</p>
+                    <p><b>Time:</b> 52.95s</p>
                     
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones seen. Fat stranding around pancreas.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around pancreas. Possible diverticulitis.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Gallstones seen and possible diverticulitis noted. Further evaluation required.</p></div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>gpt-4.5-preview (OpenAI)</h2>
-                    <p><b>Time:</b> 6.60s</p>
-                    <p><b>Tokens:</b> 995</p>
-                    <div>
-  <h3>Procedure:</h3>
-  <p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p>
-
-  <h3>Comparison:</h3>
-  <p>None.</p>
-
-  <h3>Findings:</h3>
-  <ol>
-    <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-    <li><strong>Gallbladder:</strong> Gallstones identified. No evidence of acute cholecystitis.</li>
-    <li><strong>Spleen:</strong> Normal in size.</li>
-    <li><strong>Pancreas:</strong> Fat stranding noted around the pancreas, suggestive of pancreatitis.</li>
-    <li><strong>Adrenal glands:</strong> No nodules.</li>
-    <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
-    <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
-    <li><strong>Bowel:</strong> Findings suggestive of possible diverticulitis. Appendix is normal.</li>
-    <li><strong>Mesentery:</strong> No adenopathy.</li>
-    <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
-    <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
-    <li><strong>Bones:</strong> No acute fracture.</li>
-    <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
-  </ol>
-
-  <h3>Impression:</h3>
-  <p>
-    <ol>
-      <li>Gallstones without evidence of acute cholecystitis.</li>
-      <li>Findings consistent with pancreatitis.</li>
-      <li>Possible diverticulitis.</li>
-    </ol>
-  </p>
-</div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>gpt-4.1 (OpenAI)</h2>
-                    <p><b>Time:</b> 2.97s</p>
-                    <p><b>Tokens:</b> 892</p>
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul>
-<li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-<li><strong>Gallbladder:</strong> Gallstones seen.</li>
-<li><strong>Spleen:</strong> Normal in size.</li>
-<li><strong>Pancreas:</strong> Fat stranding around pancreas.</li>
-<li><strong>Adrenal glands:</strong> No nodules.</li>
-<li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
-<li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
-<li><strong>Bowel:</strong> Possible diverticulitis.</li>
-<li><strong>Mesentery:</strong> No adenopathy.</li>
-<li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
-<li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
-<li><strong>Bones:</strong> No acute fracture.</li>
-<li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
-</ul><h3>Impression:</h3><p>Gallstones. Fat stranding around pancreas suggestive of pancreatitis. Possible diverticulitis.</p></div>
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ol><li><strong>Liver:</strong> Normal appearance and size. No focal lesion (<em>(0/1)</em>.</li><li><strong>Gallbladder:</strong> Gallstones seen (<em>(2/1)</em>). There is fat stranding around pancreas (<em>(3/1)</em>)</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around pancreas (<em>(4/1)</em>).</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis (<em>(5/1)</em>.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. Possible diverticulitis seen (<em>(6/1)</em>)</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ol><h3>Impression:</h3><p>Gallstones seen, with fat stranding around the pancreas. Possible diverticulitis present.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
                     <h2>gpt-4o (OpenAI)</h2>
-                    <p><b>Time:</b> 3.60s</p>
-                    <p><b>Tokens:</b> 958</p>
+                    <p><b>Time:</b> 6.85s</p>
+                    <p><b>Tokens:</b> 957</p>
                     ```html
 <div>
   <h3>Procedure:</h3>
@@ -496,110 +394,98 @@ Format your response as HTML with numbered, indented findings and a clear impres
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>o1 (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</p>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>o3 (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</p>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>gpt-4.1-mini (OpenAI)</h2>
-                    <p><b>Time:</b> 6.60s</p>
-                    <p><b>Tokens:</b> 948</p>
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ol>
-  <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
-  <li><strong>Gallbladder:</strong> Gallstones seen.</li>
-  <li><strong>Spleen:</strong> Normal in size.</li>
-  <li><strong>Pancreas:</strong> Fat stranding around pancreas.</li>
-  <li><strong>Adrenal glands:</strong> No nodules.</li>
-  <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
-  <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
-  <li><strong>Bowel:</strong> Possible diverticulitis. No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li>
-  <li><strong>Mesentery:</strong> No adenopathy.</li>
-  <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
-  <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
-  <li><strong>Bones:</strong> No acute fracture.</li>
-  <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
-</ol><h3>Impression:</h3><p>1. Gallstones present.<br>2. Fat stranding around pancreas suggestive of pancreatitis.<br>3. Findings suggestive of possible diverticulitis.</p></div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
-                    <h2>gpt-4.1-nano (OpenAI)</h2>
-                    <p><b>Time:</b> 2.51s</p>
-                    <p><b>Tokens:</b> 927</p>
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones are present.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around the pancreas suggestive of pancreatitis.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> No free air or abscess.</li><li><strong>Bowel:</strong> Possible diverticulitis indicated by surrounding fat stranding. No evidence of obstruction or inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Gallstones present. Fat stranding around the pancreas consistent with pancreatitis. Possible diverticulitis. No evidence of other acute intra-abdominal pathology.</p></div>
-                </section>
-            </div><div class='card'>
-                <section style='margin-bottom:40px;'>
                     <h2>gpt-4o-mini (OpenAI)</h2>
-                    <p><b>Time:</b> 6.54s</p>
-                    <p><b>Tokens:</b> 889</p>
-                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones seen.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around pancreas.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Possible diverticulitis.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Gallstones present with associated fat stranding around the pancreas and possible diverticulitis.</p></div>
+                    <p><b>Time:</b> 7.34s</p>
+                    <p><b>Tokens:</b> 953</p>
+                    ```html
+<div>
+    <h3>Procedure:</h3>
+    <p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p>
+    <h3>Comparison:</h3>
+    <p>None.</p>
+    <h3>Findings:</h3>
+    <ul>
+        <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
+        <li><strong>Gallbladder:</strong> Gallstones seen.</li>
+        <li><strong>Spleen:</strong> Normal in size.</li>
+        <li><strong>Pancreas:</strong> Fat stranding around pancreas.</li>
+        <li><strong>Adrenal glands:</strong> No nodules.</li>
+        <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
+        <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
+        <li><strong>Bowel:</strong> Possible diverticulitis. No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li>
+        <li><strong>Mesentery:</strong> No adenopathy.</li>
+        <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
+        <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
+        <li><strong>Bones:</strong> No acute fracture.</li>
+        <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
+    </ul>
+    <h3>Impression:</h3>
+    <p>Gallstones present with fat stranding around the pancreas suggestive of possible diverticulitis.</p>
+</div>
+```
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>o1-mini (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 400: {
-  "error": {
-    "message": "Unsupported value: 'messages[0].role' does not support 'system' with this model.",
-    "type": "invalid_request_error",
-    "param": "messages[0].role",
-    "code": "unsupported_value"
-  }
-}</p>
+                    <h2>gpt-4-turbo (OpenAI)</h2>
+                    <p><b>Time:</b> 9.04s</p>
+                    <p><b>Tokens:</b> 968</p>
+                    <div>
+  <h3>Procedure:</h3>
+  <p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p>
+  <h3>Comparison:</h3>
+  <p>None.</p>
+  <h3>Findings:</h3>
+  <ul>
+    <li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li>
+    <li><strong>Gallbladder:</strong> Gallstones present.</li>
+    <li><strong>Spleen:</strong> Normal in size.</li>
+    <li><strong>Pancreas:</strong> Fat stranding noted around the pancreas.</li>
+    <li><strong>Adrenal glands:</strong> No nodules.</li>
+    <li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li>
+    <li><strong>Peritoneum:</strong> There is no free air or abscess.</li>
+    <li><strong>Bowel:</strong> Possible diverticulitis noted. No evidence of inflamed bowel loops. Appendix is normal.</li>
+    <li><strong>Mesentery:</strong> No adenopathy.</li>
+    <li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li>
+    <li><strong>Pelvis:</strong> Bladder is unremarkable.</li>
+    <li><strong>Bones:</strong> No acute fracture.</li>
+    <li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li>
+  </ul>
+  <h3>Impression:</h3>
+  <p>Gallstones identified. Fat stranding around the pancreas suggestive of pancreatitis. Findings suggestive of possible diverticulitis.</p>
+</div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>o3-mini (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</p>
+                    <h2>gpt-4 (OpenAI)</h2>
+                    <p><b>Time:</b> 13.73s</p>
+                    <p><b>Tokens:</b> 915</p>
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones are present.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> There is fat stranding around the pancreas.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Possible diverticulitis. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Gallstones seen. Fat stranding around pancreas. Possible diverticulitis.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>o4-mini (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 400: {
-  "error": {
-    "message": "Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.",
-    "type": "invalid_request_error",
-    "param": "max_tokens",
-    "code": "unsupported_parameter"
-  }
-}</p>
+                    <h2>gpt-3.5-turbo (OpenAI)</h2>
+                    <p><b>Time:</b> 5.62s</p>
+                    <p><b>Tokens:</b> 913</p>
+                    <div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones seen. No evidence of stones.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around pancreas. No surrounding edema.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> No obstruction. No evidence of inflamed bowel loops. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Possible diverticulitis. No acute abnormality seen.</p></div>
                 </section>
             </div><div class='card'>
                 <section style='margin-bottom:40px;'>
-                    <h2>codex-mini-latest (OpenAI)</h2>
-                    <p><b>Error:</b> HTTP 404: {
-  "error": {
-    "message": "This model is only supported in v1/responses and not in v1/chat/completions.",
-    "type": "invalid_request_error",
-    "param": "model",
-    "code": null
-  }
-}</p>
+                    <h2>gemini-1.5-flash-latest (Gemini)</h2>
+                    <p><b>Time:</b> 2.84s</p>
+                    
+                    ```html
+<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones seen.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Fat stranding around pancreas.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Possible diverticulitis. No obstruction.  Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p>Gallstones, fat stranding around the pancreas, and possible diverticulitis.</p></div>
+```
+
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gemini-2.5-flash (Gemini)</h2>
+                    <p><b>Time:</b> 13.69s</p>
+                    
+                    ```html
+<div><h3>Procedure:</h3><p>Helical CT Abdomen and Pelvis examination performed with axial sections after administration of non-ionic IV contrast. Coronal and sagittal 3 mm thick reformats also acquired. CT scan performed according to ALARA (as low as reasonably achievable) dose protocol.</p><h3>Comparison:</h3><p>None.</p><h3>Findings:</h3><ul><li><strong>Liver:</strong> Normal appearance and size. No focal lesion.</li><li><strong>Gallbladder:</strong> Gallstones are noted. No evidence of acute cholecystitis.</li><li><strong>Spleen:</strong> Normal in size.</li><li><strong>Pancreas:</strong> Normal in size. There is fat stranding around the pancreas.</li><li><strong>Adrenal glands:</strong> No nodules.</li><li><strong>Kidneys:</strong> Symmetric bilateral renal enhancement is present. No hydronephrosis.</li><li><strong>Peritoneum:</strong> There is no free air or abscess.</li><li><strong>Bowel:</strong> Findings suggestive of diverticulitis are noted in the colon. No obstruction. Appendix is normal.</li><li><strong>Mesentery:</strong> No adenopathy.</li><li><strong>Retroperitoneum:</strong> Aorta and inferior vena cava unremarkable.</li><li><strong>Pelvis:</strong> Bladder is unremarkable.</li><li><strong>Bones:</strong> No acute fracture.</li><li><strong>Lung bases:</strong> Visualized lung bases are negative. Heart is normal in size.</li></ul><h3>Impression:</h3><p><ol><li>Findings suggestive of diverticulitis.</li><li>Gallstones are noted.</li><li>Peripancreatic fat stranding.</li></ol></p></div>
+```
                 </section>
             </div>
     </body>
