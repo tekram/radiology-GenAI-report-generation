@@ -1,0 +1,1210 @@
+
+    <!DOCTYPE html>
+    <html lang='en'>
+    <head>
+        <meta charset='UTF-8'>
+        <title>Model Testing Results for Radiology Report Generation</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+                background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+                color: #222;
+                padding: 40px;
+            }
+            h1 {
+                color: #4f46e5;
+                margin-bottom: 10px;
+            }
+            .card {
+                background: #fff;
+                border-radius: 14px;
+                box-shadow: 0 4px 24px rgba(80, 112, 255, 0.08);
+                padding: 28px 32px;
+                margin-bottom: 36px;
+                border: 1px solid #e0e7ff;
+            }
+            h2 { color: #764ba2; margin-top: 0; }
+            ul, ol { margin-left: 24px; }
+            pre { background: #f4f4f4; padding: 12px; border-radius: 6px; }
+            table {
+                font-size: 15px;
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 32px;
+                background: #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            }
+            th, td {
+                vertical-align: top;
+                text-align: left;
+                padding: 12px 14px;
+            }
+            th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+                color: #555;
+                border-bottom: 2px solid #c7d2fe;
+                transition: background-color 0.2s;
+            }
+            tr:hover {
+                background-color: #f8f9fa;
+            }
+            a {
+                color: #007bff;
+                text-decoration: none;
+                font-weight: bold;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .impression-cell {
+                font-family: 'Fira Mono', 'Consolas', monospace;
+                background: #f8fafc;
+                border-radius: 6px;
+                padding: 8px 10px;
+                color: #4f46e5;
+            }
+            .template-block {
+                background: #f4f4f4;
+                padding: 16px;
+                border-radius: 8px;
+                margin-bottom: 24px;
+                font-size: 15px;
+            }
+            .summary-title {
+                color: #4f46e5;
+                margin-top: 32px;
+                margin-bottom: 10px;
+                font-size: 1.2em;
+                font-weight: 600;
+            }
+            .model-type {
+                font-size: 0.8em;
+                color: #666;
+                font-style: italic;
+            }
+            .sort-indicator {
+                margin-left: 5px;
+                font-size: 12px;
+            }
+            .local-model {
+                background: #f0f9ff;
+                border-left: 3px solid #0ea5e9;
+            }
+            .openai-model {
+                background: #fef3c7;
+                border-left: 3px solid #f59e0b;
+            }
+        </style>
+        <script>
+            let currentSort = { column: -1, ascending: true };
+            
+            function sortTable(columnIndex) {
+                const table = document.getElementById('resultsTable');
+                const tbody = table.getElementsByTagName('tbody')[0];
+                const rows = Array.from(tbody.getElementsByTagName('tr'));
+                
+                // Update sort indicators
+                updateSortIndicators(columnIndex);
+                
+                // Determine sort direction
+                const ascending = currentSort.column === columnIndex ? !currentSort.ascending : true;
+                currentSort = { column: columnIndex, ascending: ascending };
+                
+                // Sort rows
+                rows.sort((a, b) => {
+                    const aValue = a.cells[columnIndex].textContent.trim();
+                    const bValue = b.cells[columnIndex].textContent.trim();
+                    
+                    let comparison = 0;
+                    
+                    if (columnIndex === 1) {
+                        // Sort by response time (numeric)
+                        const aTime = parseFloat(aValue.replace('s', '')) || 0;
+                        const bTime = parseFloat(bValue.replace('s', '')) || 0;
+                        comparison = aTime - bTime;
+                    } else {
+                        // Sort by text
+                        comparison = aValue.localeCompare(bValue);
+                    }
+                    
+                    return ascending ? comparison : -comparison;
+                });
+                
+                // Reorder rows
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Add visual indicators for model types
+                addModelTypeIndicators();
+            }
+            
+            function updateSortIndicators(activeColumn) {
+                // Reset all indicators
+                for (let i = 0; i < 3; i++) {
+                    const indicator = document.getElementById(`sort${i}`);
+                    indicator.textContent = '↕';
+                }
+                
+                // Set active indicator
+                const activeIndicator = document.getElementById(`sort${activeColumn}`);
+                if (currentSort.column === activeColumn && !currentSort.ascending) {
+                    activeIndicator.textContent = '↓';
+                } else {
+                    activeIndicator.textContent = '↑';
+                }
+            }
+            
+            function addModelTypeIndicators() {
+                const rows = document.querySelectorAll('#resultsTable tbody tr');
+                rows.forEach(row => {
+                    const modelCell = row.cells[0];
+                    const modelText = modelCell.textContent;
+                    
+                    // Remove existing classes
+                    row.classList.remove('local-model', 'openai-model');
+                    
+                    // Add appropriate class
+                    if (modelText.includes('(Local)')) {
+                        row.classList.add('local-model');
+                    } else if (modelText.includes('(OpenAI)')) {
+                        row.classList.add('openai-model');
+                    }
+                });
+            }
+            
+            // Initialize on page load
+            window.onload = function() {
+                addModelTypeIndicators();
+            };
+        </script>
+    </head>
+    <body>
+        <h1>Model Testing Results</h1>
+        
+    <p style="font-size:16px;line-height:1.7;margin-bottom:18px;"><b>Problem Statement:</b> Most radiologists leverage standard report templates when interpreting an imaging exam like a CAT scan. However, much time is spent in adjusting the template to actually reflect the findings from the imaging study. The tool here is being designed such that the radiologist would only need to provide relevant findings from the study and then leverage an LLM to intelligently incorporate those findings into a final report, including generating the summary of the report (referred to as Impression).</p>
+    
+        
+    <p style="font-size:16px;line-height:1.7;margin-bottom:24px;">
+      <b>Purpose:</b> This test evaluates the ability of various LLM models (both local via Ollama and external via OpenAI) to generate a radiology report from a user prompt, using a provided radiology report template as a base. The goal is to determine which models best follow instructions to keep the template unchanged except for lines that must be updated based on the user's findings. Only the relevant lines in the template should be changed, and the rest should remain as in the original template. The summary table below shows the Impression section for each model, allowing for quick comparison of clinical accuracy and template adherence.
+    </p>
+    <p style="font-size:14px;color:#666;margin-bottom:20px;">
+      <b>💡 Tip:</b> Click on any column header to sort the table by that column. Click again to reverse the sort order.
+    </p>
+    
+        <p><b>User Prompt:</b> Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.</p>
+        <p><b>Template:</b></p>
+        <div class='template-block'><h3>Procedure:</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:</strong> Clear.</li><li><strong>Heart:</strong> Normal in appearance.</li><li><strong>Pleura:</strong> No pleural effusions.</li><li><strong>Bone:</strong> No fractures.</li><li><strong>Upper abdomen:</strong> No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><p>No acute cardiopulmonary process.</p></div>
+        <div class='summary-title'>Summary Table (Click headers to sort)</div>
+        
+    <table id="resultsTable" border='1' cellpadding='8' cellspacing='0' style='border-collapse:collapse; margin-bottom:32px; width:100%; background:#fff;'>
+      <thead style='background:#f4f4f4;'>
+        <tr>
+          <th onclick="sortTable(0)" style="cursor:pointer; user-select:none;">
+            Model <span id="sort0">↕</span>
+          </th>
+          <th onclick="sortTable(1)" style="cursor:pointer; user-select:none;">
+            Response Time <span id="sort1">↕</span>
+          </th>
+          <th onclick="sortTable(2)" style="cursor:pointer; user-select:none;">
+            Impression Section <span id="sort2">↕</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>llama3 (Local (Ollama))</td><td>28.30s</td><td><ul>
+    <li>Patient presents with pulmonary edema, cardiomegaly, and bilateral pleural effusion, likely contributing to reported shortness of breath.</li>
+</ul></td></tr><tr><td>tinyllama (Local (Ollama))</td><td>4.50s</td><td><i>Not found</i></td></tr><tr><td>phi3 (Local (Ollama))</td><td>23.34s</td><td><ul>
+            <li>The patient presents with bilateral effusions and evidence of pulmonary congestion, likely secondary to cardiogenic causes. Findings are compatible with volume overload in the left pleural space potentially exacerbating a pre-existing condition.</li>
+        </ul></td></tr><tr><td>mistral (Local (Ollama))</td><td>21.31s</td><td><ul><li>Cardiomegaly and bilateral pleural effusion with left predominance. Suggestive of congestive heart failure or fluid overload.</li></ul></td></tr><tr><td>gemma (Local (Ollama))</td><td>44.72s</td><td><ul><li>Bilateral pleural effusion, cardiomegaly with vascular engorgement and pulmonary edema.</li></ul>
+```</td></tr><tr><td>meditron (Local (Ollama))</td><td>24.00s</td><td><i>Not found</i></td></tr><tr><td>medllama2 (Local (Ollama))</td><td>35.12s</td><td><p>Bilateral pleural effusion is seen, with a larger left pleural effusion than right. This suggests a cardiogenic etiology, such as heart failure or pulmonary embolism.</p></td></tr><tr><td>zephyr (Local (Ollama))</td><td>32.42s</td><td><p>The chest radiograph demonstrates bilateral pleural effusions, with the left side having a greater accumulation. Cardiomegaly is also present. Vascular engorgement and pulmonary edema are apparent. No acute abnormality is identified in the upper abdomen.</p></td></tr><tr><td>deepseek-llm (Local (Ollama))</td><td>34.17s</td><td>Shortness of breath possibly related to cardiomegaly, pulmonary edema and pleural effusion. Further evaluation recommended.</td></tr><tr><td>gpt-4o (OpenAI)</td><td>3.68s</td><td><ul>
+    <li>Cardiomegaly with pulmonary edema and bilateral pleural effusion, left greater than right.</li>
+  </ul></td></tr><tr><td>gpt-4o-mini (OpenAI)</td><td>5.90s</td><td><ul><li>Bilateral pleural effusion, cardiomegaly, vascular engorgement, and pulmonary edema noted.</li></ul></td></tr><tr><td>gpt-4-turbo (OpenAI)</td><td>5.42s</td><td><ul>
+<li>Bilateral pleural effusion, left greater than right.</li>
+<li>Cardiomegaly with pulmonary edema and vascular engorgement.</li>
+</ul></td></tr><tr><td>gpt-4 (OpenAI)</td><td>8.22s</td><td><p>Bilateral pleural effusion, cardiomegaly, vascular engorgement, and pulmonary edema.</p></td></tr><tr><td>gpt-3.5-turbo (OpenAI)</td><td>3.22s</td><td><i>Not found</i></td></tr><tr><td>gemini-1.5-flash-latest (Gemini)</td><td>2.78s</td><td><p>Bilateral pleural effusions, cardiomegaly, pulmonary edema, and vascular engorgement.</p></td></tr><tr><td>gemini-2.5-flash (Gemini)</td><td>9.06s</td><td><ul><li>Acute cardiopulmonary findings including cardiomegaly, pulmonary edema, vascular engorgement, and bilateral pleural effusions (left greater than right).</li></ul></td></tr>
+      </tbody>
+    </table>
+    
+        <div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>llama3 (Local (Ollama))</h2>
+                    <p><b>Time:</b> 28.30s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <h3>Procedure:</h3><p>Radiograph of the chest</p>
+
+<h3>Findings:</h3>
+<ul>
+    <li><strong>Lungs:</strong> Clear.</li>
+    <li><strong>Heart:</strong> Cardiomegaly.</li>
+    <li><strong>Pleura:</strong> Bilateral pleural effusion seen. Left greater than right.</li>
+    <li><strong>Bone:</strong> No fractures.</li>
+    <li><strong>Upper abdomen:</strong> No acute abnormality.</li>
+</ul>
+
+<h3>Impression:</h3>
+<ul>
+    <li>Patient presents with pulmonary edema, cardiomegaly, and bilateral pleural effusion, likely contributing to reported shortness of breath.</li>
+</ul>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>tinyllama (Local (Ollama))</h2>
+                    <p><b>Time:</b> 4.50s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        Formatting:
+
+<div class="row">
+  <h3>Procedure</h3><p>Radiograph of the chest</p>
+  <ul>
+    <li><strong>Lungs:</strong> Clear.</li>
+    <li><strong>Heart:</strong> Normal in appearance.</li>
+    <li><strong>Pluera:</strong> No pleural effusion(s).</li>
+    <li><strong>Boone:</strong> No fractuates.</li>
+    <li><strong>Upper abdomen:</strong> No acute cardiopulmonary process.</li>
+  </ul>
+  <h3>Impression</h3>
+  No acute cardiopulmonary process.
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>phi3 (Local (Ollama))</h2>
+                    <p><b>Time:</b> 23.34s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        ```html
+<div>
+    <h3>Procedure:</h3><p>Radiograph of the chest by X-Ray (XR)</p>
+    
+    <h3>Findings:</h3>
+        <ul>
+            <li><strong>Lungs:</strong> Clear ambulation with evidence of vascular engorgement and diffuse shadowing consistent with pulmonary edema.</li>
+            <li><strong>Heart:</strong> Enlarged cardiothoracic silhouette suggestive of cardiomegaly. The enlargement appears more pronounced on the left side, which may correlate with increased pleural fluid accumulation in that hemithorax.</li>
+            <li><strong>Pleura:</strong> Bilateral effusions are present; however, they demonstrate a predominance of volume and density within the left pleural space compared to the right. No pneumothorax is identified at this time.</li>
+        </ul>
+    
+    <h3>Impression:</h3>
+        <ul>
+            <li>The patient presents with bilateral effusions and evidence of pulmonary congestion, likely secondary to cardiogenic causes. Findings are compatible with volume overload in the left pleural space potentially exacerbating a pre-existing condition.</li>
+        </ul>
+</div>
+
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>mistral (Local (Ollama))</h2>
+                    <p><b>Time:</b> 21.31s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                         <h3>Procedure:</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:</strong> No specific finding mentioned, so maintain as "Clear."</li><li><strong>Heart:</strong> Cardiomegaly present.</li><li><strong>Pleura:</strong> Bilateral pleural effusion seen, left greater than right.</li><li><strong>Bone:</strong> No fractures.</li><li><strong>Upper abdomen:</strong> No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><ul><li>Cardiomegaly and bilateral pleural effusion with left predominance. Suggestive of congestive heart failure or fluid overload.</li></ul>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gemma (Local (Ollama))</h2>
+                    <p><b>Time:</b> 44.72s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        ```html
+<h3>Procedure</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:** Bilateral pleural effusion seen. Left greater than right. Pulmonary edema.</li><li><strong>Heart:** Cardiomegaly. Vascular engorgement.</li><li><strong>Pleura:** No pleural effusions.</li><li><strong>Bone:** No fractures.</li><li><strong>Upper abdomen:** No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><ul><li>Bilateral pleural effusion, cardiomegaly with vascular engorgement and pulmonary edema.</li></ul>
+```
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>meditron (Local (Ollama))</h2>
+                    <p><b>Time:</b> 24.00s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        The bilateral pleural effusions shown on the radiograph are most likely an exudative transudate in etiology, as the patient's medical history indicates acute shortness of breath and pulmonary edema. The effusion is unlikely to be a neoplasm or a parapneumonic process due to its bilateral distribution and clear appearance. Although cardiomegaly can also lead to pleural effusions, the patient's medical history indicates heart failure secondary to congestive HF. Therefore, the most likely etiology of the pleural effusion is acute decompensated heart failure with pulmonary edema (ADHFPE).  
+
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>medllama2 (Local (Ollama))</h2>
+                    <p><b>Time:</b> 35.12s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <h3>Procedure:</h3><p>Radiograph of the chest.</p>
+<h3>Findings:</h3><ul>
+	<li><strong>Lungs:</strong> Clear.</li>
+	<li><strong>Heart:</strong> Normal in appearance.</li>
+	<li><strong>Pleura:</strong> Bilateral pleural effusion seen, left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.</li>
+</ul>
+<h3>Impression:</h3><p>Bilateral pleural effusion is seen, with a larger left pleural effusion than right. This suggests a cardiogenic etiology, such as heart failure or pulmonary embolism.</p>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>zephyr (Local (Ollama))</h2>
+                    <p><b>Time:</b> 32.42s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <h3>Findings:</h3>
+<ul>
+  <li><strong>Lungs:</strong> Bilateral pleural effusion seen with greater accumulation on the left side.</li>
+  <li><strong>Heart:</strong> Cardiomegaly present.</li>
+  <li><strong>Vascular:</strong> Vascular engorgement observed.</li>
+  <li><strong>Pulmonary:</strong> Evidence of pulmonary edema is apparent.</li>
+  <li><strong>Upper Abdomen:</strong> No acute abnormality detected.</li>
+</ul>  
+<h3><br></h3>  
+<h3>Impression:</h3>
+<p>The chest radiograph demonstrates bilateral pleural effusions, with the left side having a greater accumulation. Cardiomegaly is also present. Vascular engorgement and pulmonary edema are apparent. No acute abnormality is identified in the upper abdomen.</p>  
+
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>deepseek-llm (Local (Ollama))</h2>
+                    <p><b>Time:</b> 34.17s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+    <h3>Procedure:</h3>
+    Radiograph of the chest
+</div>
+<div>
+    <h3>Findings:</h3>
+    <ul>
+        <li><strong>Lungs:</strong> Clear.</li>
+        <li><strong>Heart:</strong> Normal in appearance.</li>
+        <li><strong>Pleura:</strong> Bilateral pleural effusion seen. Left greater than right.</li>
+        <li><strong>Bone:</strong> No acute abnormality.</li>
+        <li><strong>Upper Abdomen:</strong> Normal in appearance.</li>
+    </ul>
+</div>
+<div>
+    <h3>Impression:</h3>
+    Shortness of breath possibly related to cardiomegaly, pulmonary edema and pleural effusion. Further evaluation recommended.
+</div>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gpt-4o (OpenAI)</h2>
+                    <p><b>Time:</b> 3.68s</p>
+                    <p><b>Tokens:</b> 746</p>
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+  <h3>Procedure:</h3>
+  <p>Radiograph of the chest</p>
+  <h3><br></h3>
+  <h3>Findings:</h3>
+  <ul>
+    <li><strong>Lungs:</strong> Pulmonary edema noted.</li>
+    <li><strong>Heart:</strong> Cardiomegaly with vascular engorgement.</li>
+    <li><strong>Pleura:</strong> Bilateral pleural effusion, left greater than right.</li>
+    <li><strong>Bone:</strong> No fractures.</li>
+    <li><strong>Upper abdomen:</strong> No acute abnormality.</li>
+  </ul>
+  <h3><br></h3>
+  <h3>Impression:</h3>
+  <ul>
+    <li>Cardiomegaly with pulmonary edema and bilateral pleural effusion, left greater than right.</li>
+  </ul>
+</div>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gpt-4o-mini (OpenAI)</h2>
+                    <p><b>Time:</b> 5.90s</p>
+                    <p><b>Tokens:</b> 707</p>
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div><h3>Procedure:</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:</strong> Clear.</li><li><strong>Heart:</strong> Cardiomegaly.</li><li><strong>Pleura:</strong> Bilateral pleural effusion seen. Left greater than right.</li><li><strong>Bone:</strong> No fractures.</li><li><strong>Upper abdomen:</strong> No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><ul><li>Bilateral pleural effusion, cardiomegaly, vascular engorgement, and pulmonary edema noted.</li></ul></div>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gpt-4-turbo (OpenAI)</h2>
+                    <p><b>Time:</b> 5.42s</p>
+                    <p><b>Tokens:</b> 725</p>
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+<h3>Procedure:</h3>
+<p>Radiograph of the chest</p>
+<h3>Findings:</h3>
+<ul>
+<li><strong>Lungs:</strong> Pulmonary edema and vascular engorgement noted.</li>
+<li><strong>Heart:</strong> Cardiomegaly.</li>
+<li><strong>Pleura:</strong> Bilateral pleural effusion, more prominent on the left.</li>
+<li><strong>Bone:</strong> No fractures.</li>
+<li><strong>Upper abdomen:</strong> No acute abnormality.</li>
+</ul>
+<h3>Impression:</h3>
+<ul>
+<li>Bilateral pleural effusion, left greater than right.</li>
+<li>Cardiomegaly with pulmonary edema and vascular engorgement.</li>
+</ul>
+</div>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gpt-4 (OpenAI)</h2>
+                    <p><b>Time:</b> 8.22s</p>
+                    <p><b>Tokens:</b> 719</p>
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <h3>Procedure:</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:</strong> Pulmonary edema.</li><li><strong>Heart:</strong> Cardiomegaly with vascular engorgement.</li><li><strong>Pleura:</strong> Bilateral pleural effusion, left greater than right.</li><li><strong>Bone:</strong> No fractures.</li><li><strong>Upper abdomen:</strong> No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><p>Bilateral pleural effusion, cardiomegaly, vascular engorgement, and pulmonary edema.</p>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gpt-3.5-turbo (OpenAI)</h2>
+                    <p><b>Time:</b> 3.22s</p>
+                    <p><b>Tokens:</b> 736</p>
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+<h3>Procedure</h3><p>Radiograph of the chest</p>
+<h3><br></h3>
+<h3>Findings</h3>
+<ul>
+<li><strong>Lungs:</strong> Clear.</li>
+<li><strong>Heart:</strong> Cardiomegaly. Vascular engorgement.</li>
+<li><strong>Pleura:</strong> Bilateral pleural effusion seen. Left greater than right.</li>
+<li><strong>Bone:</strong> No fractures.</li>
+<li><strong>Upper abdomen:</strong> No acute abnormality.</li>
+</ul>
+<h3><br></h3>
+<h3>Impression</h3>
+<ul>
+<li>Pulmonary edema with bilateral pleural effusion, left greater than right. Cardiomegaly and vascular engorgement noted.</li>
+</ul>
+</div>
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gemini-1.5-flash-latest (Gemini)</h2>
+                    <p><b>Time:</b> 2.78s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+<h3>Procedure:</h3>
+<p>Radiograph of the chest</p>
+<h3><br></h3>
+<h3>Findings:</h3>
+<ul>
+<li><strong>Lungs:</strong> Pulmonary edema.</li>
+<li><strong>Heart:</strong> Cardiomegaly.</li>
+<li><strong>Pleura:</strong> Bilateral pleural effusion seen. Left greater than right.</li>
+<li><strong>Bone:</strong> No fractures.</li>
+<li><strong>Upper abdomen:</strong> No acute abnormality.</li>
+</ul>
+<h3><br></h3>
+<h3>Impression:</h3>
+<p>Bilateral pleural effusions, cardiomegaly, pulmonary edema, and vascular engorgement.</p>
+</div>
+
+                    </div>
+                </section>
+            </div><div class='card'>
+                <section style='margin-bottom:40px;'>
+                    <h2>gemini-2.5-flash (Gemini)</h2>
+                    <p><b>Time:</b> 9.06s</p>
+                    
+                    
+                    <details style='margin:20px 0; border:1px solid #ddd; border-radius:5px;'>
+                        <summary style='padding:10px; background:#f8f9fa; cursor:pointer; font-weight:bold;'>
+                            📝 System Prompt Used
+                        </summary>
+                        <div style='padding:15px; background:#f8f9fa; font-family:monospace; font-size:12px; white-space:pre-wrap; border-top:1px solid #ddd;'>
+You are a radiology report assistant.
+
+Your job is to generate a complete, structured radiology report by applying the provided relevant findings **to the matching sections** in the template. The template represents the default report format.  
+
+---  
+
+📌 INPUTS  
+Modality: XR  
+Body Part(s): chest  
+Relevant Findings: Bilateral pleural effusion seen. Left greater than right. Cardiomegaly. Vascular engorgement. Pulmonary edema.  
+Patient History: Shortness of breath  
+
+TEMPLATE:  
+&lt;h3&gt;Procedure:&lt;/h3&gt;&lt;p&gt;Radiograph of the chest&lt;/p&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Findings:&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; Clear.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; Normal in appearance.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Pleura:&lt;/strong&gt; No pleural effusions.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Bone:&lt;/strong&gt; No fractures.&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Upper abdomen:&lt;/strong&gt; No acute abnormality.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;&lt;br&gt;&lt;/h3&gt;&lt;h3&gt;Impression:&lt;/h3&gt;&lt;p&gt;No acute cardiopulmonary process.&lt;/p&gt;  
+
+---  
+
+📌 INSTRUCTIONS  
+
+- Use the format and structure from the template exactly.  
+- **Preserve all sections in the Findings** (e.g., Lungs, Heart, Pleura, Bone, Upper Abdomen), even if the relevant findings do not modify them.  
+- **Only edit a section in Findings if there's a related update. Otherwise, keep the original sentence unchanged.**  
+- **Keep the Impression section brief. Only summarize the most clinically relevant or abnormal findings. Do not repeat normals unless they are specifically important.**  
+- Do NOT add or infer any findings not present in the input.  
+- Use standard radiology language.  
+- Format your response using &lt;div&gt;, &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;em&gt; only. No markdown.
+
+Format output as structured HTML:
+
+- &lt;h3&gt;Procedure&lt;/h3&gt;&lt;p&gt;…&lt;/p&gt;  
+- &lt;h3&gt;Findings&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Lungs:&lt;/strong&gt; …&lt;/li&gt;&lt;li&gt;&lt;strong&gt;Heart:&lt;/strong&gt; …&lt;/li&gt;…&lt;/ul&gt;  
+- &lt;h3&gt;Impression&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+                        </div>
+                    </details>
+                    
+                    <div style='border-top:2px solid #e9ecef; padding-top:20px;'>
+                        <h3>Generated Report:</h3>
+                        <div>
+<h3>Procedure:</h3><p>Radiograph of the chest</p><h3><br></h3><h3>Findings:</h3><ul><li><strong>Lungs:</strong> Pulmonary edema with vascular engorgement.</li><li><strong>Heart:</strong> Cardiomegaly.</li><li><strong>Pleura:</strong> Bilateral pleural effusions, left greater than right.</li><li><strong>Bone:</strong> No fractures.</li><li><strong>Upper abdomen:</strong> No acute abnormality.</li></ul><h3><br></h3><h3>Impression:</h3><ul><li>Acute cardiopulmonary findings including cardiomegaly, pulmonary edema, vascular engorgement, and bilateral pleural effusions (left greater than right).</li></ul></div>
+                    </div>
+                </section>
+            </div>
+    </body>
+    </html>
+    
