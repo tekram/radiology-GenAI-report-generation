@@ -171,9 +171,43 @@
                     }
                 });
             }
+            function removePromptSections() {
+                function removeNode(node) {
+                    if (node && node.parentNode) node.parentNode.removeChild(node);
+                }
+                function includesText(el, text) {
+                    return el && el.textContent && el.textContent.toLowerCase().includes(text);
+                }
+                // Remove any <details> whose <summary> mentions System Prompt
+                document.querySelectorAll('details > summary').forEach(summary => {
+                    if (includesText(summary, 'system prompt')) {
+                        removeNode(summary.parentElement);
+                    }
+                });
+                // Remove stand-alone labels or headings that say System Prompt Used
+                document.querySelectorAll('.summary-title, div, p, h2, h3, span').forEach(el => {
+                    if (includesText(el, 'system prompt used')) {
+                        if (el.classList.contains('summary-title') || el.childElementCount === 0) {
+                            removeNode(el);
+                        }
+                    }
+                });
+                // Remove <p><b>System Prompt:</b></p> and immediate following <details>
+                document.querySelectorAll('p b').forEach(b => {
+                    if (includesText(b, 'system prompt')) {
+                        const p = b.closest('p');
+                        removeNode(p);
+                        const next = p && p.nextElementSibling;
+                        if (next && next.tagName && next.tagName.toLowerCase() === 'details') {
+                            removeNode(next);
+                        }
+                    }
+                });
+            }
             
             // Initialize on page load
             window.onload = function() {
+                removePromptSections();
                 addModelTypeIndicators();
             };
         </script>
